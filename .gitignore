@@ -1,0 +1,7 @@
+/misc/
+OBJ/
+DebugConfig/
+*.uvguix.*
+*.uvoptx
+*.ini
+*.bat
