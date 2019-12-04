@@ -1,6 +1,7 @@
 /misc/
 OBJ/
 DebugConfig/
+.vscode/
 *.uvguix.*
 *.uvoptx
 *.ini
