@@ -18,11 +18,8 @@
 #include "lwip/netif.h"
 #include "lwip_comm.h"
 #include "lwipopts.h"
-#include "tcp_client_demo.h"
-#include "tcp_client_demo.h"
 #include "tcp_server_demo.h"
 #include "udp_demo.h"
-#include "httpd.h"
 
 //ALIENTEK 探索者STM32F407开发板 实验55
 //LWIP网络通信综合实验-库函数版本
@@ -62,8 +59,7 @@ void lwip_test_ui(u8 mode)
 		if(speed&1<<1)LCD_ShowString(30,150,200,16,16,"Ethernet Speed:100M");
 		else LCD_ShowString(30,150,200,16,16,"Ethernet Speed:10M");
 		LCD_ShowString(30,170,200,16,16,"KEY0:TCP Server Test");
-		LCD_ShowString(30,190,200,16,16,"KEY1:TCP Client Test");
-		LCD_ShowString(30,210,200,16,16,"KEY2:UDP Test");
+		LCD_ShowString(30,190,200,16,16,"KEY2:UDP Test");
 	}
 }
 
@@ -107,7 +103,6 @@ int main(void)
 		lwip_periodic_handle();
 	}
 	lwip_test_ui(2);//加载后半部分UI 
-	httpd_init();	//HTTP初始化(默认开启websever)
 	while(1)
 	{
 		key=KEY_Scan(0);
@@ -117,10 +112,6 @@ int main(void)
 				tcp_server_test();
 				lwip_test_ui(3);//重新加载UI
 				break;
-			case KEY1_PRES://TCP Client模式
-				tcp_client_test();
-				lwip_test_ui(3);//重新加载UI
-				break; 
 			case KEY2_PRES://UDP模式
 				udp_demo_test();
 				lwip_test_ui(3);//重新加载UI
