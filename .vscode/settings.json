@@ -1,6 +1,0 @@
-{
-    "files.associations": {
-        "malloc.h": "c",
-        "tcp_server_demo.h": "c"
-    }
-}
