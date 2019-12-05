@@ -1,8 +1,13 @@
 /misc/
 OBJ/
 DebugConfig/
+node_modules/
 .vscode/
 *.uvguix.*
 *.uvoptx
 *.ini
 *.bat
+
+# 用于规范commit msg
+package.json
+package-lock.json
