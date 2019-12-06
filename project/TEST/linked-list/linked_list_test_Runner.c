@@ -2,12 +2,19 @@
 
 /*=======Automagically Detected Files To Include=====*/
 #include "unity.h"
+#include "linked_list.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 /*=======External Functions This Runner Calls=====*/
 extern void setUp(void);
 extern void tearDown(void);
-extern void testWillAlwaysPass();
+extern void testListInit(void);
+extern void testAppendSingleStackNode(void);
+extern void testAppendSingleHeapNode(void);
+extern void testAppendMultiHeapNode(void);
+extern void testRemoveSingleStackNode(void);
+extern void testRemoveMultiHeapNode(void);
 
 
 /*=======Mock Management=====*/
@@ -71,7 +78,12 @@ static void run_test(UnityTestFunction func, const char* name, int line_num)
 int main(void)
 {
   UnityBegin("..\\\\TEST\\\\linked-list\\\\linked_list_test.c");
-  run_test(testWillAlwaysPass, "testWillAlwaysPass", 12);
+  run_test(testListInit, "testListInit", 21);
+  run_test(testAppendSingleStackNode, "testAppendSingleStackNode", 27);
+  run_test(testAppendSingleHeapNode, "testAppendSingleHeapNode", 40);
+  run_test(testAppendMultiHeapNode, "testAppendMultiHeapNode", 56);
+  run_test(testRemoveSingleStackNode, "testRemoveSingleStackNode", 79);
+  run_test(testRemoveMultiHeapNode, "testRemoveMultiHeapNode", 90);
 
   return UnityEnd();
 }

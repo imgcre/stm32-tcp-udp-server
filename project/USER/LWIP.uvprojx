@@ -558,11 +558,6 @@
               <FilePath>..\SYSTEM\usart\usart.c</FilePath>
             </File>
             <File>
-              <FileName>linked-list.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\SYSTEM\container\linked-list.c</FilePath>
-            </File>
-            <File>
               <FileName>debug_printf_itm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SYSTEM\debug_print\debug_printf_itm.c</FilePath>
@@ -622,6 +617,11 @@
               <FileName>debug_printf_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SYSTEM\debug_print\debug_printf_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>linked_list.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SYSTEM\container\linked_list.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1699,11 +1699,6 @@
               <FilePath>..\SYSTEM\usart\usart.c</FilePath>
             </File>
             <File>
-              <FileName>linked-list.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\SYSTEM\container\linked-list.c</FilePath>
-            </File>
-            <File>
               <FileName>debug_printf_itm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SYSTEM\debug_print\debug_printf_itm.c</FilePath>
@@ -1763,6 +1758,11 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+            <File>
+              <FileName>linked_list.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SYSTEM\container\linked_list.c</FilePath>
             </File>
           </Files>
         </Group>

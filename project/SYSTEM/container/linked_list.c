@@ -1,15 +1,22 @@
-#include "linked-list.h"
+#include "linked_list.h"
 
-//数据域放在后面, 这样可以方便外面的程序操作那啥
-//头节点用于记录
-
+/**
+ * @brief 链表初始化
+ * 
+ * @param head 头节点指针
+ */
 void list_init(HeadNode* head) {
 	head->ptr.prev = (PtrDomain*)head;
 	head->ptr.next = (PtrDomain*)head;
 	head->len = 0;
 }
 
-//在尾节点后添加一个节点
+/**
+ * @brief 向链表末尾添加节点
+ * 
+ * @param head 头节点指针
+ * @param newNode 新节点指针
+ */
 void list_append(HeadNode* head, PtrDomain* newNode) {
 	PtrDomain* rear = head->ptr.prev;
 	rear->next = newNode;
@@ -19,12 +26,23 @@ void list_append(HeadNode* head, PtrDomain* newNode) {
 	++head->len;
 }
 
+/**
+ * @brief 获取链表尺寸(节点数)
+ * 
+ * @param head 头节点指针
+ * @return int 链表尺寸
+ */
 int list_size(HeadNode* head) {
 	return head->len;
 }
 
-//将节点从链表中移除，不负责节点的释放工作
-//返回1表示成功, 返回0表示链表已为空
+/**
+ * @brief 从链表中删除节点
+ * 
+ * @param head 头节点指针
+ * @param node 欲删除节点
+ * @return int 成功返回非零
+ */
 int list_remove(HeadNode* head, PtrDomain* node) {
 	PtrDomain* prev = node->prev;
 	PtrDomain* next = node->next;
@@ -37,5 +55,3 @@ int list_remove(HeadNode* head, PtrDomain* node) {
 	--head->len;
 	return 1;
 }
-
-
