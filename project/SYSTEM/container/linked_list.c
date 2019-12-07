@@ -48,6 +48,8 @@ int list_remove(HeadNode* head, PtrDomain* node) {
 	PtrDomain* next = node->next;
 	if(head->len <= 0)
 		return 0;
+	if(node->prev == node && node == node->next)
+		return 0;
 	prev->next = next;
 	next->prev = prev;
 	node->next = node;

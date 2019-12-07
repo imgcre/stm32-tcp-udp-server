@@ -26,7 +26,7 @@
 #define M_TCP_SERVER_RX_BUFSIZE	200		//定义tcp server最大接收数据长度
 #define M_TCP_SERVER_PORT			8088	//定义tcp server的端口
  
-
+#define MAX_TCP_CLIENT_CNT 8
 
 
 //tcp服务器连接状态
@@ -44,7 +44,7 @@ struct m_tcp_server_struct
 	struct pbuf *p;         //指向接收/或传输的pbuf
 }; 
 
-void m_tcp_server_test(void);//TCP Server测试函数
+void tcp_udp_test(void);//TCP Server测试函数
 err_t m_tcp_server_accept(void *arg,struct tcp_pcb *newpcb,err_t err);
 err_t m_tcp_server_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err);
 void m_tcp_server_error(void *arg,err_t err);
@@ -53,4 +53,5 @@ err_t m_tcp_server_sent(void *arg, struct tcp_pcb *tpcb, u16_t len);
 void m_tcp_server_senddata(struct tcp_pcb *tpcb, struct m_tcp_server_struct *es);
 void m_tcp_server_connection_close(struct tcp_pcb *tpcb, struct m_tcp_server_struct *es);
 void m_tcp_server_remove_timewait(void);
+void m_udp_demo_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, struct ip_addr *addr, u16_t port);
 #endif 
