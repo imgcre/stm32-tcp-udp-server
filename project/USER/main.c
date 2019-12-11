@@ -20,15 +20,7 @@
 #include "lwipopts.h"
 #include "tcp_server_demo.h"
 #include "udp_demo.h"
-
-//ALIENTEK 探索者STM32F407开发板 实验55
-//LWIP网络通信综合实验-库函数版本
-//技术支持：www.openedv.com
-//淘宝店铺：http://eboard.taobao.com  
-//广州市星翼电子科技有限公司  
-//作者：正点原子 @ALIENTEK
-
-/*ALIENTEK为LWIP学习专门编写手册《ALIENTEK STM32F4 LWIP使用教程.pdf》，详细说明请参考手册。*/
+#include "tcp_udp_server.h"
 
 extern void Adc_Temperate_Init(void);	//声明内部温度传感器初始化函数
 //加载UI
@@ -43,10 +35,7 @@ void lwip_test_ui(u8 mode)
 	if(mode&1<<0)
 	{
 		LCD_Fill(30,30,lcddev.width,110,WHITE);	//清除显示
-		LCD_ShowString(30,30,200,16,16,"Explorer STM32F4");
 		LCD_ShowString(30,50,200,16,16,"Ethernet lwIP Test");
-		LCD_ShowString(30,70,200,16,16,"ATOM@ALIENTEK");
-		LCD_ShowString(30,90,200,16,16,"2014/8/15"); 	
 	}
 	if(mode&1<<1)
 	{
@@ -58,8 +47,8 @@ void lwip_test_ui(u8 mode)
 		speed=LAN8720_Get_Speed();//得到网速
 		if(speed&1<<1)LCD_ShowString(30,150,200,16,16,"Ethernet Speed:100M");
 		else LCD_ShowString(30,150,200,16,16,"Ethernet Speed:10M");
-		LCD_ShowString(30,170,200,16,16,"KEY0:TCP Server Test");
-		LCD_ShowString(30,190,200,16,16,"KEY2:UDP Test");
+		LCD_ShowString(30,170,200,16,16,"KEY0:TCP UDP Test");
+		//LCD_ShowString(30,190,200,16,16,"KEY2:UDP Test");
 	}
 }
 
@@ -108,14 +97,10 @@ int main(void)
 		key=KEY_Scan(0);
 		switch(key)
 		{
-			case KEY0_PRES://TCP Server模式
-				tcp_server_test();
-				lwip_test_ui(3);//重新加载UI
+			case KEY0_PRES:
+				tcp_udp_test();
+				lwip_test_ui(3);
 				break;
-			case KEY2_PRES://UDP模式
-				udp_demo_test();
-				lwip_test_ui(3);//重新加载UI
-				break; 
 		}
 		lwip_periodic_handle();
 		delay_ms(2);
@@ -124,7 +109,7 @@ int main(void)
 		if(t==200)
 		{ 
 			t=0;
-			LCD_Fill(30,230,230,230+16,WHITE);//清除显示
+			LCD_Fill(30,230,230,230+16,WHITE);
 			LED0=!LED0;
 		} 
 	}

@@ -7,21 +7,28 @@
 #include "malloc.h"
 #include "stdio.h"
 #include "string.h"  
-#include "linked_list.h"
+
 
 #define UDP_PORT 1234
 
 HeadNode m_tcpClientList;
 
+char *udpDataToSend = "Hello UDP\r\n";
+char *tcpDataToSend = "Hello TCP\r\n";
+
+char sprintBuff[128];
+
 void tcp_udp_test(void) {
 	struct tcp_pcb *tcp, *conn;
 	struct udp_pcb *udp;
 	struct ip_addr remoteIp;
+	struct pbuf *buf;
+	int i;
 
 	list_init(&m_tcpClientList);
 
 	//TODO: 以下代码或需要重写
-	printf("tcp listening on %d.%d.%d.%d:%d\r\n", lwipdev.ip[0],lwipdev.ip[1],lwipdev.ip[2],lwipdev.ip[3], M_TCP_SERVER_PORT);
+	printf("tcp binding...\r\n");
 	
 	if(!(tcp = tcp_new())) {
 		printf("tcp create failed\r\n");
@@ -32,19 +39,16 @@ void tcp_udp_test(void) {
 		printf("tcp bind failed\r\n");
 		return;
 	}
+	
+	printf("tcp listening on %d.%d.%d.%d:%d\r\n", lwipdev.ip[0],lwipdev.ip[1],lwipdev.ip[2],lwipdev.ip[3], M_TCP_SERVER_PORT);
 
 	conn = tcp_listen(tcp);
 	tcp_accept(conn, m_tcp_server_accept);
 
-	//TODO: UDP remote ip and port
+	
+	printf("udp connecting...\r\n");
 	if(!(udp = udp_new())) {
 		printf("udp create failed\r\n");
-		return;
-	}
-
-	IP4_ADDR(&remoteIp, 192, 168, 1, 1);
-	if(udp_connect(udp, &remoteIp, UDP_PORT) != ERR_OK) {
-		printf("udp connect failed\r\n");
 		return;
 	}
 
@@ -53,9 +57,28 @@ void tcp_udp_test(void) {
 		return;
 	}
 	
+	printf("udp bound on port %d\r\n", UDP_PORT);
 	udp_recv(udp, m_udp_demo_recv, NULL);
+	
+
 
 	while(1) {
+		TcpClientInfo* node;
+		switch(KEY_Scan(0)) {
+			case KEY0_PRES: //TCP发送
+				//给所有的客户端发送消息
+				if(list_size(&m_tcpClientList) == 0) {
+					printf("tcp no client connected\r\n");
+					break;
+				} 
+				
+				for(node = (TcpClientInfo*)m_tcpClientList.ptr.next; &node->ptr != &m_tcpClientList.ptr; node = (TcpClientInfo*)node->ptr.next) {
+					sprintf(sprintBuff, "Your addr is %s:%d\r\n", ipaddr_ntoa(&node->pcb->remote_ip), node->pcb->remote_port);
+					tcp_sendData(node, sprintBuff, strlen(sprintBuff));
+				}
+				
+				break;
+		}
 		lwip_periodic_handle();
 		delay_ms(2);
 	}
@@ -64,13 +87,11 @@ void tcp_udp_test(void) {
 	m_tcp_server_remove_timewait();
 	udp_disconnect(udp); 
 	udp_remove(udp);
+	
 }
 
-typedef struct {
-	PtrDomain ptr;
-	struct tcp_pcb* pcb;
-} TcpClientInfo;
 
+//TCP客户连接回调
 err_t m_tcp_server_accept(void *arg, struct tcp_pcb *clientPcb, err_t err) {
 	TcpClientInfo *info; 
 
@@ -78,6 +99,8 @@ err_t m_tcp_server_accept(void *arg, struct tcp_pcb *clientPcb, err_t err) {
 		printf("too many tcp clients\r\n");
 		return ERR_MEM;
 	}
+	
+	printf("tcp client connected: %s:%d\r\n", ipaddr_ntoa(&clientPcb->remote_ip), clientPcb->remote_port);
 
 	tcp_setprio(clientPcb,TCP_PRIO_MIN);
 
@@ -86,6 +109,7 @@ err_t m_tcp_server_accept(void *arg, struct tcp_pcb *clientPcb, err_t err) {
 		return ERR_MEM;
 
 	info->pcb = clientPcb;
+	info->sendBuf = NULL;
 	list_append(&m_tcpClientList, &info->ptr);
 
 	tcp_arg(clientPcb, info);
@@ -96,15 +120,30 @@ err_t m_tcp_server_accept(void *arg, struct tcp_pcb *clientPcb, err_t err) {
 	return ERR_OK;
 }
 
+//TCP接收回调
 err_t m_tcp_server_recv(void *arg, struct tcp_pcb *clientPcb, struct pbuf *p, err_t err)
 {
 	u32 data_len = 0;
 	struct pbuf *q;
-  	TcpClientInfo* info = arg;
+  TcpClientInfo* info = arg;
 
 	if(p == NULL) { //TCP连接待关闭
+		printf("tcp client disconnected: %s:%d\r\n", ipaddr_ntoa(&clientPcb->remote_ip), clientPcb->remote_port);
+		list_remove(&m_tcpClientList, &info->ptr);
+		tcp_close(clientPcb);  //断开连接
 		return ERR_OK;
 	}
+	
+	printf("tcp received(%s:%d):\r\n", ipaddr_ntoa(&clientPcb->remote_ip), clientPcb->remote_port);
+	for(q = p; q != NULL; q = q->next) {
+		int i;
+		for(i = 0; i < q->len; i++) {
+			putchar(((char*)q->payload)[i]);
+		}
+	}
+	
+	tcp_sendData(info, tcpDataToSend, strlen(tcpDataToSend));
+	
 
 	tcp_recved(clientPcb,p->tot_len);
 	pbuf_free(p);
@@ -126,18 +165,47 @@ err_t m_tcp_server_poll(void *arg, struct tcp_pcb *tpcb) {
 
 	if(info == NULL) {
 		tcp_abort(tpcb);
-		list_remove(&m_tcpClientList, &info->ptr);
 		return ERR_ABRT;
 	}
 
-	//TODO: 在这里发送数据
 	return ERR_OK;
 }
 
-//lwIP tcp_sent的回调函数(当从远端主机接收到ACK信号后发送数据)
+//TCP数据发送回调
 err_t m_tcp_server_sent(void *arg, struct tcp_pcb *tpcb, u16_t len) {
+	TcpClientInfo* info = arg;
+	LWIP_UNUSED_ARG(len); 
+	if(info->sendBuf)tcp_sendBuf(info);
 	return ERR_OK;
-} 
+}
+
+void tcp_sendData(TcpClientInfo* clientInfo, char* data, int len) {
+	clientInfo->sendBuf = pbuf_alloc(PBUF_TRANSPORT, len, PBUF_POOL);
+	pbuf_take(clientInfo->sendBuf, data, len);
+	tcp_sendBuf(clientInfo);
+}
+
+void tcp_sendBuf(TcpClientInfo* clientInfo) {
+	struct pbuf *ptr;
+	u16 plen;
+	err_t wr_err=ERR_OK;
+	 while((wr_err==ERR_OK)&&clientInfo->sendBuf&&(clientInfo->sendBuf->len<=tcp_sndbuf(clientInfo->pcb)))
+	 {
+		ptr=clientInfo->sendBuf; //刚开始ptr就是es的p
+		wr_err=tcp_write(clientInfo->pcb,ptr->payload,ptr->len,1); //将要发送的数据加入发送缓冲队列中
+		if(wr_err==ERR_OK)
+		{ 
+			plen=ptr->len;
+			clientInfo->sendBuf=ptr->next;			//指向下一个pbuf
+			if(clientInfo->sendBuf)pbuf_ref(clientInfo->sendBuf);	//pbuf的ref加一
+			pbuf_free(ptr);
+			tcp_recved(clientInfo->pcb,plen); 		//更新tcp窗口大小
+		}else if(wr_err==ERR_MEM)clientInfo->sendBuf=ptr;
+		tcp_output(clientInfo->pcb);   //将发送缓冲队列中的数据发送出去
+	 }
+}
+
+
 
 extern void tcp_pcb_purge(struct tcp_pcb *pcb);	//在 tcp.c里面 
 extern struct tcp_pcb *tcp_active_pcbs;			//在 tcp.c里面 
@@ -161,66 +229,29 @@ void m_tcp_server_remove_timewait(void) {
 	}
 }
 
+//udp接收回调
 void m_udp_demo_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, struct ip_addr *addr, u16_t port) {
-	/*
-	u32 data_len = 0;
-	struct pbuf *q;
-	if(p!=NULL)	//接收到不为空的数据时
-	{
-		memset(udp_demo_recvbuf,0,UDP_DEMO_RX_BUFSIZE);  //数据接收缓冲区清零
-		for(q=p;q!=NULL;q=q->next)  //遍历完整个pbuf链表
-		{
-			//判断要拷贝到UDP_DEMO_RX_BUFSIZE中的数据是否大于UDP_DEMO_RX_BUFSIZE的剩余空间，如果大于
-			//的话就只拷贝UDP_DEMO_RX_BUFSIZE中剩余长度的数据，否则的话就拷贝所有的数据
-			if(q->len > (UDP_DEMO_RX_BUFSIZE-data_len)) memcpy(udp_demo_recvbuf+data_len,q->payload,(UDP_DEMO_RX_BUFSIZE-data_len));//拷贝数据
-			else memcpy(udp_demo_recvbuf+data_len,q->payload,q->len);
-			data_len += q->len;  	
-			if(data_len > UDP_DEMO_RX_BUFSIZE) break; //超出TCP客户端接收数组,跳出	
+	struct pbuf *q, *bufToSend;
+	
+	if(p == NULL) {
+		udp_disconnect(upcb);
+		return;
+	}
+	
+	printf("udp received(%s:%d):\r\n", ipaddr_ntoa(addr), port);
+	for(q = p; q != NULL; q = q->next) {
+		int i;
+		for(i = 0; i < q->len; i++) {
+			putchar(((char*)q->payload)[i]);
 		}
-		upcb->remote_ip=*addr; 				//记录远程主机的IP地址
-		upcb->remote_port=port;  			//记录远程主机的端口号
-		lwipdev.remoteip[0]=upcb->remote_ip.addr&0xff; 		//IADDR4
-		lwipdev.remoteip[1]=(upcb->remote_ip.addr>>8)&0xff; //IADDR3
-		lwipdev.remoteip[2]=(upcb->remote_ip.addr>>16)&0xff;//IADDR2
-		lwipdev.remoteip[3]=(upcb->remote_ip.addr>>24)&0xff;//IADDR1 
-		udp_demo_flag|=1<<6;	//标记接收到数据了
-		pbuf_free(p);//释放内存
-	}else
-	{
-		udp_disconnect(upcb); 
+	}
+	
+	bufToSend = pbuf_alloc(PBUF_TRANSPORT, strlen((char*)udpDataToSend), PBUF_POOL);
+	if(bufToSend) {
+		bufToSend->payload = udpDataToSend; 
+		udp_sendto(upcb, bufToSend, addr, port);
+		pbuf_free(bufToSend);
 	} 
-	*/
+	
+	pbuf_free(p);
 } 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
