@@ -27,6 +27,7 @@
  
 #define M_TCP_SERVER_RX_BUFSIZE	200		//定义tcp server最大接收数据长度
 #define M_TCP_SERVER_PORT			8088	//定义tcp server的端口
+#define UDP_PORT 1234
  
 #define MAX_TCP_CLIENT_CNT 8
 

@@ -34,7 +34,7 @@
 #include "lwip/def.h"
 #include "lwip/lwip_sys.h"
 #include "lwip/mem.h"
-#include "timer.h"
+#include <stdint.h>
 
 //为LWIP提供计时
 extern uint32_t lwip_localtime;//lwip本地时间计数器,单位:ms
