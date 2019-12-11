@@ -26,12 +26,12 @@ void tcp_udp_test(void) {
 		return;
 	}
 
-	if(tcp_bind(tcp,IP_ADDR_ANY,M_TCP_SERVER_PORT) != ERR_OK) {
+	if(tcp_bind(tcp,IP_ADDR_ANY,TCP_SERVER_PORT) != ERR_OK) {
 		printf("tcp bind failed\r\n");
 		return;
 	}
 	
-	printf("tcp listening on %d.%d.%d.%d:%d\r\n", lwipdev.ip[0],lwipdev.ip[1],lwipdev.ip[2],lwipdev.ip[3], M_TCP_SERVER_PORT);
+	printf("tcp listening on %d.%d.%d.%d:%d\r\n", lwipdev.ip[0],lwipdev.ip[1],lwipdev.ip[2],lwipdev.ip[3], TCP_SERVER_PORT);
 
 	conn = tcp_listen(tcp);
 	tcp_accept(conn, m_tcp_server_accept);
@@ -116,7 +116,7 @@ err_t m_tcp_server_recv(void *arg, struct tcp_pcb *clientPcb, struct pbuf *p, er
 	if(p == NULL) { //TCP连接待关闭
 		printf("tcp client disconnected: %s:%d\r\n", ipaddr_ntoa(&clientPcb->remote_ip), clientPcb->remote_port);
 		list_remove(&m_tcpClientList, &info->ptr);
-		tcp_close(clientPcb);  //断开连接
+		tcp_close(clientPcb); //断开连接
 		return ERR_OK;
 	}
 	
@@ -181,30 +181,30 @@ void tcp_sendBuf(TcpClientInfo* clientInfo) {
 		if(wr_err==ERR_OK)
 		{ 
 			plen=ptr->len;
-			clientInfo->sendBuf=ptr->next;			//指向下一个pbuf
-			if(clientInfo->sendBuf)pbuf_ref(clientInfo->sendBuf);	//pbuf的ref加一
+			clientInfo->sendBuf=ptr->next; //指向下一个pbuf
+			if(clientInfo->sendBuf)pbuf_ref(clientInfo->sendBuf); //pbuf的ref加一
 			pbuf_free(ptr);
-			tcp_recved(clientInfo->pcb,plen); 		//更新tcp窗口大小
+			tcp_recved(clientInfo->pcb,plen); //更新tcp窗口大小
 		}else if(wr_err==ERR_MEM)clientInfo->sendBuf=ptr;
-		tcp_output(clientInfo->pcb);   //将发送缓冲队列中的数据发送出去
+		tcp_output(clientInfo->pcb); //将发送缓冲队列中的数据发送出去
 	 }
 }
 
 
 
-extern void tcp_pcb_purge(struct tcp_pcb *pcb);	//在 tcp.c里面 
-extern struct tcp_pcb *tcp_active_pcbs;			//在 tcp.c里面 
-extern struct tcp_pcb *tcp_tw_pcbs;				//在 tcp.c里面  
+extern void tcp_pcb_purge(struct tcp_pcb *pcb);
+extern struct tcp_pcb *tcp_active_pcbs;
+extern struct tcp_pcb *tcp_tw_pcbs;
 //强制删除TCP Server主动断开时的time wait
 void m_tcp_server_remove_timewait(void) {
 	struct tcp_pcb *pcb,*pcb2; 
 	while(tcp_active_pcbs!=NULL)
 	{
-		lwip_periodic_handle();//继续轮询
-		delay_ms(10);//等待tcp_active_pcbs为空  
+		lwip_periodic_handle(); //继续轮询
+		delay_ms(10); //等待tcp_active_pcbs为空  
 	}
 	pcb=tcp_tw_pcbs;
-	while(pcb!=NULL)//如果有等待状态的pcbs
+	while(pcb!=NULL) //如果有等待状态的pcbs
 	{
 		tcp_pcb_purge(pcb); 
 		tcp_tw_pcbs=pcb->next;
