@@ -5,7 +5,6 @@
 #include "key.h"
 #include "lwip_comm.h"
 #include "LAN8720.h"
-#include "usmart.h"
 #include "timer.h"
 #include "lcd.h"
 #include "sram.h"
@@ -59,7 +58,6 @@ int main(void)
 	delay_init(168);       	//延时初始化
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置系统中断优先级分组2
 	uart_init(115200);   	//串口波特率设置
-	usmart_dev.init(84); 	//初始化USMART
 	LED_Init();  			//LED初始化
 	KEY_Init();  			//按键初始化
 	LCD_Init(); 			//LCD初始化
