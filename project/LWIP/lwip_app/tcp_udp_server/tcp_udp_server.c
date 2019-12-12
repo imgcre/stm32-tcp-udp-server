@@ -133,13 +133,13 @@ err_t m_tcp_server_recv(void *arg, struct tcp_pcb *clientPcb, struct pbuf *p, er
 		return ERR_OK;
 	}
 	
-	printf("tcp received(%s:%d):\r\n", ipaddr_ntoa(&clientPcb->remote_ip), clientPcb->remote_port);
-	for(q = p; q != NULL; q = q->next) {
-		int i;
-		for(i = 0; i < q->len; i++) {
-			putchar(((char*)q->payload)[i]);
-		}
-	}
+	//printf("tcp received(%s:%d):\r\n", ipaddr_ntoa(&clientPcb->remote_ip), clientPcb->remote_port);
+	//for(q = p; q != NULL; q = q->next) {
+	//	int i;
+	//	for(i = 0; i < q->len; i++) {
+	//		putchar(((char*)q->payload)[i]);
+	//	}
+	//}
 	
 	tcp_sendData(info, tcpDataToSend, strlen(tcpDataToSend));
 	
@@ -237,6 +237,7 @@ void m_udp_demo_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, struct ip_
 		return;
 	}
 	
+	/*
 	printf("udp received(%s:%d):\r\n", ipaddr_ntoa(addr), port);
 	for(q = p; q != NULL; q = q->next) {
 		int i;
@@ -244,6 +245,7 @@ void m_udp_demo_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, struct ip_
 			putchar(((char*)q->payload)[i]);
 		}
 	}
+	*/
 	
 	bufToSend = pbuf_alloc(PBUF_TRANSPORT, strlen((char*)udpDataToSend), PBUF_POOL);
 	if(bufToSend) {
