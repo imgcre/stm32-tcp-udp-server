@@ -7,7 +7,6 @@
 #include "timer.h"
 #include "lcd.h"
 #include "sram.h"
-#include "rtc.h"
 #include "beep.h"
 #include "adc.h"
 #include "temperature.h"
@@ -61,7 +60,6 @@ int main(void)
 	LCD_Init(); 			//LCD初始化
 	FSMC_SRAM_Init();		//初始化外部SRAM  
 	BEEP_Init();			//蜂鸣器初始化
-	My_RTC_Init();  		//RTC初始化
 	Adc_Init();  			//ADC初始化 
 	Adc_Temperate_Init(); 	//内部温度传感器初始化
 	TIM3_Int_Init(999,839); //100khz的频率,计数1000为10ms
