@@ -1,7 +1,6 @@
 #include "udp_demo.h" 
 #include "delay.h"
 #include "usart.h"
-#include "led.h"
 #include "key.h"
 #include "lcd.h"
 #include "malloc.h"
@@ -84,7 +83,6 @@ void udp_demo_test(void)
 	u8 *tbuf;
  	u8 key;
 	u8 res=0;		
-	u8 t=0; 
  	
 	udp_demo_set_remoteip();//œ»—°‘ÒIP
 	LCD_Clear(WHITE);	//«Â∆¡
@@ -138,12 +136,6 @@ void udp_demo_test(void)
 		} 
 		lwip_periodic_handle();
 		delay_ms(2);
-		t++;
-		if(t==200)
-		{
-			t=0;
-			LED0=!LED0;
-		}
 	}
 	udp_demo_connection_close(udppcb); 
 	myfree(SRAMIN,tbuf);

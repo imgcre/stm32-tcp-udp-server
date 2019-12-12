@@ -1,7 +1,6 @@
 #include "sys.h"
 #include "delay.h"
 #include "usart.h"
-#include "led.h"
 #include "key.h"
 #include "lwip_comm.h"
 #include "LAN8720.h"
@@ -58,7 +57,6 @@ int main(void)
 	delay_init(168);       	//延时初始化
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置系统中断优先级分组2
 	uart_init(115200);   	//串口波特率设置
-	LED_Init();  			//LED初始化
 	KEY_Init();  			//按键初始化
 	LCD_Init(); 			//LCD初始化
 	FSMC_SRAM_Init();		//初始化外部SRAM  
@@ -104,12 +102,6 @@ int main(void)
 		delay_ms(2);
 		t++;
 		if(t==100)LCD_ShowString(30,230,200,16,16,"Please choose a mode!");
-		if(t==200)
-		{ 
-			t=0;
-			LCD_Fill(30,230,230,230+16,WHITE);
-			LED0=!LED0;
-		} 
 	}
 }
 

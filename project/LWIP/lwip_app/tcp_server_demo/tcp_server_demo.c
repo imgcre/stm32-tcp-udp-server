@@ -1,7 +1,6 @@
 #include "tcp_server_demo.h" 
 #include "delay.h"
 #include "usart.h"
-#include "led.h"
 #include "key.h"
 #include "lcd.h"
 #include "malloc.h"
@@ -44,7 +43,6 @@ void tcp_server_test(void)
 	u8 *tbuf;
  	u8 key;
 	u8 res=0;		
-	u8 t=0; 
 	u8 connflag=0;		//连接标记
 	
 	LCD_Clear(WHITE);	//清屏
@@ -103,12 +101,6 @@ void tcp_server_test(void)
 		}
 		lwip_periodic_handle();
 		delay_ms(2);
-		t++;
-		if(t==200)
-		{
-			t=0;
-			LED0=!LED0;
-		} 
 	}   
 	tcp_server_connection_close(tcppcbnew,0);//关闭TCP Server连接
 	tcp_server_connection_close(tcppcbconn,0);//关闭TCP Server连接 

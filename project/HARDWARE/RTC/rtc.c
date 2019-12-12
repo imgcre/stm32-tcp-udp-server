@@ -1,5 +1,4 @@
 #include "rtc.h"
-#include "led.h"
 #include "delay.h"
 #include "usart.h" 
 //////////////////////////////////////////////////////////////////////////////////	 
@@ -192,7 +191,6 @@ void RTC_WKUP_IRQHandler(void)
 	if(RTC_GetFlagStatus(RTC_FLAG_WUTF)==SET)//WK_UP中断?
 	{ 
 		RTC_ClearFlag(RTC_FLAG_WUTF);	//清除中断标志
-		LED1=!LED1; 
 	}   
 	EXTI_ClearITPendingBit(EXTI_Line22);//清除中断线22的中断标志 								
 }
