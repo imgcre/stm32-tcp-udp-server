@@ -8,8 +8,6 @@
 #include "lcd.h"
 #include "sram.h"
 #include "beep.h"
-#include "adc.h"
-#include "temperature.h"
 #include "sram.h"
 #include "malloc.h"
 #include "lwip/netif.h"
@@ -60,8 +58,6 @@ int main(void)
 	LCD_Init(); 			//LCD初始化
 	FSMC_SRAM_Init();		//初始化外部SRAM  
 	BEEP_Init();			//蜂鸣器初始化
-	Adc_Init();  			//ADC初始化 
-	Adc_Temperate_Init(); 	//内部温度传感器初始化
 	TIM3_Int_Init(999,839); //100khz的频率,计数1000为10ms
 	mymem_init(SRAMIN);		//初始化内部内存池
 	mymem_init(SRAMEX);		//初始化外部内存池
