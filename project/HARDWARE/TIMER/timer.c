@@ -50,9 +50,17 @@ void TIM3_Int_Init(u16 arr,u16 psc)
 //定时器3中断服务函数
 void TIM3_IRQHandler(void)
 {
+	static volatile int i = 0;
+	
 	if(TIM_GetITStatus(TIM3,TIM_IT_Update)==SET) //溢出中断
 	{
 		lwip_localtime +=10; //加10
+		i++;
+		i %= 100;
+		if(i == 0) {
+			LED0 = !LED0;
+		}
+		
 	}
 	TIM_ClearITPendingBit(TIM3,TIM_IT_Update);  //清除中断标志位
 }
