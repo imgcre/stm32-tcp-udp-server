@@ -2,7 +2,7 @@
 #include "stm32f4x7_eth.h"
 #include "usart.h" 
 #include "delay.h"
-#include "stdlib.h"
+#include "malloc.h" 
 
 __align(4) ETH_DMADESCTypeDef *DMARxDscrTab;	//以太网DMA接收描述符数据结构体指针
 __align(4) ETH_DMADESCTypeDef *DMATxDscrTab;	//以太网DMA发送描述符数据结构体指针 
@@ -18,7 +18,7 @@ u8 LAN8720_Init(void)
 	u8 rval=0;
 	GPIO_InitTypeDef GPIO_InitStructure;
   
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA|RCC_AHB1Periph_GPIOC|RCC_AHB1Periph_GPIOD|RCC_AHB1Periph_GPIOG , ENABLE);//使能GPIO时钟 RMII接口
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA|RCC_AHB1Periph_GPIOC|RCC_AHB1Periph_GPIOG , ENABLE);//使能GPIO时钟 RMII接口
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);   //使能SYSCFG时钟
   
 	SYSCFG_ETH_MediaInterfaceConfig(SYSCFG_ETH_MediaInterface_RMII); //MAC和PHY之间使用RMII接口
@@ -232,10 +232,10 @@ u32 ETH_GetCurrentTxBuffer(void)
 //    其他,失败
 u8 ETH_Mem_Malloc(void)
 { 
-	DMARxDscrTab=malloc(ETH_RXBUFNB*sizeof(ETH_DMADESCTypeDef));//申请内存
-	DMATxDscrTab=malloc(ETH_TXBUFNB*sizeof(ETH_DMADESCTypeDef));//申请内存  
-	Rx_Buff=malloc(ETH_RX_BUF_SIZE*ETH_RXBUFNB);	//申请内存
-	Tx_Buff=malloc(ETH_TX_BUF_SIZE*ETH_TXBUFNB);	//申请内存
+	DMARxDscrTab=mymalloc(SRAMIN,ETH_RXBUFNB*sizeof(ETH_DMADESCTypeDef));//申请内存
+	DMATxDscrTab=mymalloc(SRAMIN,ETH_TXBUFNB*sizeof(ETH_DMADESCTypeDef));//申请内存  
+	Rx_Buff=mymalloc(SRAMIN,ETH_RX_BUF_SIZE*ETH_RXBUFNB);	//申请内存
+	Tx_Buff=mymalloc(SRAMIN,ETH_TX_BUF_SIZE*ETH_TXBUFNB);	//申请内存
 	if(!DMARxDscrTab||!DMATxDscrTab||!Rx_Buff||!Tx_Buff)
 	{
 		ETH_Mem_Free();
@@ -247,10 +247,10 @@ u8 ETH_Mem_Malloc(void)
 //释放ETH 底层驱动申请的内存
 void ETH_Mem_Free(void)
 { 
-	free(DMARxDscrTab);//释放内存
-	free(DMATxDscrTab);//释放内存
-	free(Rx_Buff);		//释放内存
-	free(Tx_Buff);		//释放内存  
+	myfree(SRAMIN,DMARxDscrTab);//释放内存
+	myfree(SRAMIN,DMATxDscrTab);//释放内存
+	myfree(SRAMIN,Rx_Buff);		//释放内存
+	myfree(SRAMIN,Tx_Buff);		//释放内存  
 }
 
 

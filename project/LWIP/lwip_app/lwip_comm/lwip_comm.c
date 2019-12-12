@@ -9,10 +9,10 @@
 #include "lwip/tcp_impl.h"
 #include "lwip/ip_frag.h"
 #include "lwip/tcpip.h" 
+#include "malloc.h"
 #include "delay.h"
 #include "usart.h"  
 #include <stdio.h>
-#include <stdlib.h>
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //ALIENTEK STM32F407开发板
@@ -53,9 +53,9 @@ u8 lwip_comm_mem_malloc(void)
 	u32 mempsize;
 	u32 ramheapsize; 
 	mempsize=memp_get_memorysize();			//得到memp_memory数组大小
-	memp_memory=malloc(mempsize);	//为memp_memory申请内存
+	memp_memory=mymalloc(SRAMIN,mempsize);	//为memp_memory申请内存
 	ramheapsize=LWIP_MEM_ALIGN_SIZE(MEM_SIZE)+2*LWIP_MEM_ALIGN_SIZE(4*3)+MEM_ALIGNMENT;//得到ram heap大小
-	ram_heap=malloc(ramheapsize);	//为ram_heap申请内存 
+	ram_heap=mymalloc(SRAMIN,ramheapsize);	//为ram_heap申请内存 
 	if(!memp_memory||!ram_heap)//有申请失败的
 	{
 		lwip_comm_mem_free();
@@ -66,8 +66,8 @@ u8 lwip_comm_mem_malloc(void)
 //lwip中mem和memp内存释放
 void lwip_comm_mem_free(void)
 { 	
-	free(memp_memory);
-	free(ram_heap);
+	myfree(SRAMIN,memp_memory);
+	myfree(SRAMIN,ram_heap);
 }
 //lwip 默认IP设置
 //lwipx:lwip控制结构体指针

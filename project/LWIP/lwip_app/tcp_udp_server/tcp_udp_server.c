@@ -1,9 +1,15 @@
-#include <stdio.h>
-#include <string.h>
 #include "tcp_udp_server.h" 
 #include "delay.h"
 #include "usart.h"
+#include "led.h"
 #include "key.h"
+#include "lcd.h"
+#include "malloc.h"
+#include "stdio.h"
+#include "string.h"  
+
+
+#define UDP_PORT 1234
 
 HeadNode m_tcpClientList;
 
@@ -15,13 +21,16 @@ char sprintBuff[128];
 void tcp_udp_test(void) {
 	struct tcp_pcb *tcp, *conn;
 	struct udp_pcb *udp;
+	struct ip_addr remoteIp;
+	struct pbuf *buf;
+	int i;
 
 	list_init(&m_tcpClientList);
 
+	//TODO: 以下代码或需要重写
 	printf("tcp binding...\r\n");
 	
-	tcp = tcp_new();
-	if(!tcp) {
+	if(!(tcp = tcp_new())) {
 		printf("tcp create failed\r\n");
 		return;
 	}
@@ -38,8 +47,7 @@ void tcp_udp_test(void) {
 
 	
 	printf("udp connecting...\r\n");
-	udp = udp_new();
-	if(!udp) {
+	if(!(udp = udp_new())) {
 		printf("udp create failed\r\n");
 		return;
 	}
@@ -51,6 +59,8 @@ void tcp_udp_test(void) {
 	
 	printf("udp bound on port %d\r\n", UDP_PORT);
 	udp_recv(udp, m_udp_demo_recv, NULL);
+	
+
 
 	while(1) {
 		TcpClientInfo* node;
@@ -66,17 +76,20 @@ void tcp_udp_test(void) {
 					sprintf(sprintBuff, "Your addr is %s:%d\r\n", ipaddr_ntoa(&node->pcb->remote_ip), node->pcb->remote_port);
 					tcp_sendData(node, sprintBuff, strlen(sprintBuff));
 				}
+				
 				break;
 		}
 		lwip_periodic_handle();
 		delay_ms(2);
 	}
-	//tcp_close(tcp);
-	//tcp_close(conn);
-	//m_tcp_server_remove_timewait();
-	//udp_disconnect(udp); 
-	//udp_remove(udp);
+	tcp_close(tcp);
+	tcp_close(conn);
+	m_tcp_server_remove_timewait();
+	udp_disconnect(udp); 
+	udp_remove(udp);
+	
 }
+
 
 //TCP客户连接回调
 err_t m_tcp_server_accept(void *arg, struct tcp_pcb *clientPcb, err_t err) {
@@ -110,6 +123,7 @@ err_t m_tcp_server_accept(void *arg, struct tcp_pcb *clientPcb, err_t err) {
 //TCP接收回调
 err_t m_tcp_server_recv(void *arg, struct tcp_pcb *clientPcb, struct pbuf *p, err_t err)
 {
+	u32 data_len = 0;
 	struct pbuf *q;
   TcpClientInfo* info = arg;
 
@@ -146,6 +160,7 @@ void m_tcp_server_error(void *arg, err_t err) {
 } 
 
 err_t m_tcp_server_poll(void *arg, struct tcp_pcb *tpcb) {
+	err_t ret_err;
 	TcpClientInfo* info = arg;
 
 	if(info == NULL) {

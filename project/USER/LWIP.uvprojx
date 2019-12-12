@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CORE;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\FWLIB\STM32F4xx_StdPeriph_Driver\inc;..\USER;..\HARDWARE\KEY;..\HARDWARE\ETHERNET;..\FWLIB\STM32F4x7_ETH_Driver\inc;..\LWIP;..\LWIP\arch;..\LWIP\lwip_header;..\LWIP\app\TCP_Client;..\LWIP\lwip_app\lwip_comm;..\LWIP\lwip-1.4.1\src\include;..\LWIP\lwip-1.4.1\src\include\ipv4;..\LWIP\lwip-1.4.1\src\include\lwip;..\LWIP\lwip-1.4.1\src\include\netif;..\LWIP\lwip_app\tcp_server_demo;..\LWIP\lwip_app\udp_demo;..\LWIP\lwip_app\tcp_udp_server;..\SYSTEM\container;..\SYSTEM\debug_print</IncludePath>
+              <IncludePath>..\CORE;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\FWLIB\STM32F4xx_StdPeriph_Driver\inc;..\USER;..\HARDWARE\KEY;..\HARDWARE\LCD;..\HARDWARE\ETHERNET;..\HARDWARE\TIMER;..\HARDWARE\LED;..\HARDWARE\BEEP;..\HARDWARE\RTC;..\HARDWARE\ADC;..\HARDWARE\SRAM;..\HARDWARE\InterTemperate;..\FWLIB\STM32F4x7_ETH_Driver\inc;..\MALLOC;..\USMART;..\LWIP;..\LWIP\arch;..\LWIP\lwip_header;..\LWIP\app\TCP_Client;..\LWIP\lwip_app\lwip_comm;..\LWIP\lwip-1.4.1\src\include;..\LWIP\lwip-1.4.1\src\include\ipv4;..\LWIP\lwip-1.4.1\src\include\lwip;..\LWIP\lwip-1.4.1\src\include\netif;..\LWIP\lwip_app\tcp_server_demo;..\LWIP\lwip_app\udp_demo;..\LWIP\lwip_app\tcp_udp_server;..\SYSTEM\container;..\SYSTEM\debug_print</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -408,9 +408,49 @@
               <FilePath>..\HARDWARE\KEY\key.c</FilePath>
             </File>
             <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\LED\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\TIMER\timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\LCD\lcd.c</FilePath>
+            </File>
+            <File>
               <FileName>LAN8720.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\ETHERNET\LAN8720.c</FilePath>
+            </File>
+            <File>
+              <FileName>sram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\SRAM\sram.c</FilePath>
+            </File>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\ADC\adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>beep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\BEEP\beep.c</FilePath>
+            </File>
+            <File>
+              <FileName>temperature.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\InterTemperate\temperature.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\RTC\rtc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -586,12 +626,42 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>USMART</GroupName>
+          <Files>
+            <File>
+              <FileName>usmart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USMART\usmart.c</FilePath>
+            </File>
+            <File>
+              <FileName>usmart_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USMART\usmart_config.c</FilePath>
+            </File>
+            <File>
+              <FileName>usmart_str.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USMART\usmart_str.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>LWIP-APP</GroupName>
           <Files>
             <File>
               <FileName>lwip_comm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\LWIP\lwip_app\lwip_comm\lwip_comm.c</FilePath>
+            </File>
+            <File>
+              <FileName>tcp_server_demo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\LWIP\lwip_app\tcp_server_demo\tcp_server_demo.c</FilePath>
+            </File>
+            <File>
+              <FileName>udp_demo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\LWIP\lwip_app\udp_demo\udp_demo.c</FilePath>
             </File>
             <File>
               <FileName>tcp_udp_server.c</FileName>
@@ -787,6 +857,16 @@
               <FileName>tcpip.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\LWIP\lwip-1.4.1\src\api\tcpip.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MALLOC</GroupName>
+          <Files>
+            <File>
+              <FileName>malloc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MALLOC\malloc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1520,9 +1600,49 @@
               <FilePath>..\HARDWARE\KEY\key.c</FilePath>
             </File>
             <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\LED\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\TIMER\timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\LCD\lcd.c</FilePath>
+            </File>
+            <File>
               <FileName>LAN8720.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\ETHERNET\LAN8720.c</FilePath>
+            </File>
+            <File>
+              <FileName>sram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\SRAM\sram.c</FilePath>
+            </File>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\ADC\adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>beep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\BEEP\beep.c</FilePath>
+            </File>
+            <File>
+              <FileName>temperature.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\InterTemperate\temperature.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\RTC\rtc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1698,12 +1818,42 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>USMART</GroupName>
+          <Files>
+            <File>
+              <FileName>usmart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USMART\usmart.c</FilePath>
+            </File>
+            <File>
+              <FileName>usmart_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USMART\usmart_config.c</FilePath>
+            </File>
+            <File>
+              <FileName>usmart_str.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USMART\usmart_str.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>LWIP-APP</GroupName>
           <Files>
             <File>
               <FileName>lwip_comm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\LWIP\lwip_app\lwip_comm\lwip_comm.c</FilePath>
+            </File>
+            <File>
+              <FileName>tcp_server_demo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\LWIP\lwip_app\tcp_server_demo\tcp_server_demo.c</FilePath>
+            </File>
+            <File>
+              <FileName>udp_demo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\LWIP\lwip_app\udp_demo\udp_demo.c</FilePath>
             </File>
             <File>
               <FileName>tcp_udp_server.c</FileName>
@@ -1899,6 +2049,16 @@
               <FileName>tcpip.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\LWIP\lwip-1.4.1\src\api\tcpip.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MALLOC</GroupName>
+          <Files>
+            <File>
+              <FileName>malloc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MALLOC\malloc.c</FilePath>
             </File>
           </Files>
         </Group>
