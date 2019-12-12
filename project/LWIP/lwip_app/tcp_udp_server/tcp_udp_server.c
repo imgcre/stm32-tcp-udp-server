@@ -2,7 +2,6 @@
 #include "delay.h"
 #include "usart.h"
 #include "key.h"
-#include "lcd.h"
 #include "malloc.h"
 #include "stdio.h"
 #include "string.h"  
