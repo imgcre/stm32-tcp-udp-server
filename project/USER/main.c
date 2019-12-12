@@ -12,8 +12,6 @@
 #include "lwip/netif.h"
 #include "lwip_comm.h"
 #include "lwipopts.h"
-#include "tcp_server_demo.h"
-#include "udp_demo.h"
 #include "tcp_udp_server.h"
 
 extern void Adc_Temperate_Init(void);	//声明内部温度传感器初始化函数

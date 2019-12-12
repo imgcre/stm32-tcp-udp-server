@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CORE;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\FWLIB\STM32F4xx_StdPeriph_Driver\inc;..\USER;..\HARDWARE\KEY;..\HARDWARE\LCD;..\HARDWARE\ETHERNET;..\HARDWARE\TIMER;..\HARDWARE\SRAM;..\FWLIB\STM32F4x7_ETH_Driver\inc;..\MALLOC;..\LWIP;..\LWIP\arch;..\LWIP\lwip_header;..\LWIP\app\TCP_Client;..\LWIP\lwip_app\lwip_comm;..\LWIP\lwip-1.4.1\src\include;..\LWIP\lwip-1.4.1\src\include\ipv4;..\LWIP\lwip-1.4.1\src\include\lwip;..\LWIP\lwip-1.4.1\src\include\netif;..\LWIP\lwip_app\tcp_server_demo;..\LWIP\lwip_app\udp_demo;..\LWIP\lwip_app\tcp_udp_server;..\SYSTEM\container;..\SYSTEM\debug_print</IncludePath>
+              <IncludePath>..\CORE;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\FWLIB\STM32F4xx_StdPeriph_Driver\inc;..\USER;..\HARDWARE\KEY;..\HARDWARE\LCD;..\HARDWARE\ETHERNET;..\HARDWARE\TIMER;..\HARDWARE\SRAM;..\FWLIB\STM32F4x7_ETH_Driver\inc;..\MALLOC;..\LWIP;..\LWIP\arch;..\LWIP\lwip_header;..\LWIP\app\TCP_Client;..\LWIP\lwip_app\lwip_comm;..\LWIP\lwip-1.4.1\src\include;..\LWIP\lwip-1.4.1\src\include\ipv4;..\LWIP\lwip-1.4.1\src\include\lwip;..\LWIP\lwip-1.4.1\src\include\netif;..\LWIP\lwip_app\tcp_udp_server;..\SYSTEM\container;..\SYSTEM\debug_print</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -607,16 +607,6 @@
               <FileName>lwip_comm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\LWIP\lwip_app\lwip_comm\lwip_comm.c</FilePath>
-            </File>
-            <File>
-              <FileName>tcp_server_demo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\LWIP\lwip_app\tcp_server_demo\tcp_server_demo.c</FilePath>
-            </File>
-            <File>
-              <FileName>udp_demo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\LWIP\lwip_app\udp_demo\udp_demo.c</FilePath>
             </File>
             <File>
               <FileName>tcp_udp_server.c</FileName>
@@ -1754,16 +1744,6 @@
               <FileName>lwip_comm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\LWIP\lwip_app\lwip_comm\lwip_comm.c</FilePath>
-            </File>
-            <File>
-              <FileName>tcp_server_demo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\LWIP\lwip_app\tcp_server_demo\tcp_server_demo.c</FilePath>
-            </File>
-            <File>
-              <FileName>udp_demo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\LWIP\lwip_app\udp_demo\udp_demo.c</FilePath>
             </File>
             <File>
               <FileName>tcp_udp_server.c</FileName>
