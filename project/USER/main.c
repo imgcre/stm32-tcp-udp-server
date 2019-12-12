@@ -7,7 +7,6 @@
 #include "timer.h"
 #include "lcd.h"
 #include "sram.h"
-#include "beep.h"
 #include "sram.h"
 #include "malloc.h"
 #include "lwip/netif.h"
@@ -57,7 +56,6 @@ int main(void)
 	KEY_Init();  			//按键初始化
 	LCD_Init(); 			//LCD初始化
 	FSMC_SRAM_Init();		//初始化外部SRAM  
-	BEEP_Init();			//蜂鸣器初始化
 	TIM3_Int_Init(999,839); //100khz的频率,计数1000为10ms
 	mymem_init(SRAMIN);		//初始化内部内存池
 	mymem_init(SRAMEX);		//初始化外部内存池
