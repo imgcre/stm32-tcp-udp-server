@@ -7,59 +7,48 @@
 #include "stdio.h"
 #include "string.h"  
 
-
-#define UDP_PORT 1234
-
 HeadNode m_tcpClientList;
-
-char *udpDataToSend = "Hello UDP\r\n";
-char *tcpDataToSend = "Hello TCP\r\n";
-
 char sprintBuff[128];
+
+UdpInfo m_udpInfos[] = {
+	{UDP_PORT0}, 
+	{UDP_PORT1},
+};
 
 void tcp_udp_test(void) {
 	struct tcp_pcb *tcp, *conn;
-	struct udp_pcb *udp;
 	struct ip_addr remoteIp;
 	struct pbuf *buf;
 	int i;
 
 	list_init(&m_tcpClientList);
-
-	//TODO: 以下代码或需要重写
 	printf("tcp binding...\r\n");
-	
 	if(!(tcp = tcp_new())) {
 		printf("tcp create failed\r\n");
 		return;
 	}
-
 	if(tcp_bind(tcp,IP_ADDR_ANY,TCP_SERVER_PORT) != ERR_OK) {
 		printf("tcp bind failed\r\n");
 		return;
 	}
-	
 	printf("tcp listening on %d.%d.%d.%d:%d\r\n", lwipdev.ip[0],lwipdev.ip[1],lwipdev.ip[2],lwipdev.ip[3], TCP_SERVER_PORT);
-
 	conn = tcp_listen(tcp);
 	tcp_accept(conn, m_tcp_server_accept);
-
 	
-	printf("udp connecting...\r\n");
-	if(!(udp = udp_new())) {
-		printf("udp create failed\r\n");
-		return;
+	for(i = 0; i < ARR_LEN(m_udpInfos); i++) {
+		UdpInfo* curInfo = &m_udpInfos[i];
+		printf("udp%d connecting...\r\n", i);
+		if(!(curInfo->pcb = udp_new())) {
+			printf("udp%d create failed\r\n", i);
+			return;
+		}
+		if(udp_bind(curInfo->pcb, IP_ADDR_ANY, curInfo->port) != ERR_OK) {
+			printf("udp%d bind failed\r\n", i);
+			return;
+		}
+		printf("udp%d bound on port %d\r\n", i,  curInfo->port);
+		udp_recv(curInfo->pcb, m_udp_demo_recv, curInfo);
 	}
-
-	if(udp_bind(udp, IP_ADDR_ANY, UDP_PORT) != ERR_OK) {
-		printf("udp bind failed\r\n");
-		return;
-	}
-	
-	printf("udp bound on port %d\r\n", UDP_PORT);
-	udp_recv(udp, m_udp_demo_recv, NULL);
-	
-
 
 	while(1) {
 		TcpClientInfo* node;
@@ -70,12 +59,10 @@ void tcp_udp_test(void) {
 					printf("tcp no client connected\r\n");
 					break;
 				} 
-				
 				for(node = (TcpClientInfo*)m_tcpClientList.ptr.next; &node->ptr != &m_tcpClientList.ptr; node = (TcpClientInfo*)node->ptr.next) {
 					sprintf(sprintBuff, "Your addr is %s:%d\r\n", ipaddr_ntoa(&node->pcb->remote_ip), node->pcb->remote_port);
 					tcp_sendData(node, sprintBuff, strlen(sprintBuff));
 				}
-				
 				break;
 		}
 		lwip_periodic_handle();
@@ -84,9 +71,12 @@ void tcp_udp_test(void) {
 	tcp_close(tcp);
 	tcp_close(conn);
 	m_tcp_server_remove_timewait();
-	udp_disconnect(udp); 
-	udp_remove(udp);
 	
+	for(i = 0; i < ARR_LEN(m_udpInfos); i++) {
+		struct udp_pcb* curPcb = m_udpInfos[i].pcb;
+		udp_disconnect(curPcb); 
+		udp_remove(curPcb);
+	}
 }
 
 
@@ -94,10 +84,10 @@ void tcp_udp_test(void) {
 err_t m_tcp_server_accept(void *arg, struct tcp_pcb *clientPcb, err_t err) {
 	TcpClientInfo *info; 
 
-	if(list_size(&m_tcpClientList) >= MAX_TCP_CLIENT_CNT) {
-		printf("too many tcp clients\r\n");
-		return ERR_MEM;
-	}
+	//if(list_size(&m_tcpClientList) >= MAX_TCP_CLIENT_CNT) {
+	//	printf("too many tcp clients\r\n");
+	//	return ERR_MEM;
+	//}
 	
 	printf("tcp client connected: %s:%d\r\n", ipaddr_ntoa(&clientPcb->remote_ip), clientPcb->remote_port);
 
@@ -125,6 +115,7 @@ err_t m_tcp_server_recv(void *arg, struct tcp_pcb *clientPcb, struct pbuf *p, er
 	u32 data_len = 0;
 	struct pbuf *q;
   TcpClientInfo* info = arg;
+	static char *dataToSend = "Hello TCP\r\n";
 
 	if(p == NULL) { //TCP连接待关闭
 		printf("tcp client disconnected: %s:%d\r\n", ipaddr_ntoa(&clientPcb->remote_ip), clientPcb->remote_port);
@@ -141,9 +132,7 @@ err_t m_tcp_server_recv(void *arg, struct tcp_pcb *clientPcb, struct pbuf *p, er
 	//	}
 	//}
 	
-	tcp_sendData(info, tcpDataToSend, strlen(tcpDataToSend));
-	
-
+	tcp_sendData(info, dataToSend, strlen(dataToSend));
 	tcp_recved(clientPcb,p->tot_len);
 	pbuf_free(p);
 	return ERR_OK;
@@ -166,7 +155,6 @@ err_t m_tcp_server_poll(void *arg, struct tcp_pcb *tpcb) {
 		tcp_abort(tpcb);
 		return ERR_ABRT;
 	}
-
 	return ERR_OK;
 }
 
@@ -231,6 +219,8 @@ void m_tcp_server_remove_timewait(void) {
 //udp接收回调
 void m_udp_demo_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, struct ip_addr *addr, u16_t port) {
 	struct pbuf *q, *bufToSend;
+	char* dataToSend;
+	UdpInfo *info = arg;
 	
 	if(p == NULL) {
 		udp_disconnect(upcb);
@@ -247,9 +237,19 @@ void m_udp_demo_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, struct ip_
 	}
 	*/
 	
-	bufToSend = pbuf_alloc(PBUF_TRANSPORT, strlen((char*)udpDataToSend), PBUF_POOL);
+	//sprintBuff
+	
+	if(info == &m_udpInfos[0]) {
+		dataToSend = "Hello from udp 0\r\n";
+	} else if(info == &m_udpInfos[1]) {
+		dataToSend = "Hello from another udp\r\n";
+	} else {
+		dataToSend = "Hello from unknown udp\r\n";
+	}
+	
+	bufToSend = pbuf_alloc(PBUF_TRANSPORT, strlen((char*)dataToSend), PBUF_POOL);
 	if(bufToSend) {
-		bufToSend->payload = udpDataToSend; 
+		bufToSend->payload = dataToSend; 
 		udp_sendto(upcb, bufToSend, addr, port);
 		pbuf_free(bufToSend);
 	} 

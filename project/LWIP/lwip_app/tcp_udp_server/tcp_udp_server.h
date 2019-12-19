@@ -9,11 +9,14 @@
 #include "lwip/mem.h"
 #include "lwip_comm.h"
 #include "linked_list.h"
- 
+
 #define TCP_SERVER_PORT 8088
-#define UDP_PORT 1234
+#define UDP_PORT0 1234
+#define UDP_PORT1 1235
  
 #define MAX_TCP_CLIENT_CNT 8
+
+#define ARR_LEN(x) (sizeof(x)/sizeof((x)[0]))
 
 //LWIP回调函数使用的结构体
 struct m_tcp_server_struct
@@ -28,6 +31,11 @@ typedef struct {
 	struct tcp_pcb* pcb;
 	struct pbuf* sendBuf;
 } TcpClientInfo;
+
+typedef struct {
+	short port;
+	struct udp_pcb *pcb;
+} UdpInfo;
 
 void tcp_udp_test(void);//TCP Server测试函数
 err_t m_tcp_server_accept(void *arg,struct tcp_pcb *newpcb,err_t err);
